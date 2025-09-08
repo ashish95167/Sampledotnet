@@ -22,14 +22,7 @@ steps:
 - script: dotnet test --configuration Release --no-build
   displayName: 'Run unit tests'
 
-# ✅ Publish the project output into the staging directory
-- script: dotnet publish --configuration Release --output $(Build.ArtifactStagingDirectory)
-  displayName: 'Publish project output'
-
-# ✅ Now publish the artifact
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
-    publishLocation: 'Container'
-
