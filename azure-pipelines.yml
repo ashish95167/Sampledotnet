@@ -10,6 +10,15 @@ pool:
   vmImage: 'windows-2022'
 
 steps:
+# Install NuGet
+- task: NuGetToolInstaller@1
+
+# Restore NuGet packages
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '**/*.sln'
+
+# Build using Visual Studio
 - task: VSBuild@1
   inputs:
     solution: '**/*.sln'
@@ -17,11 +26,13 @@ steps:
     platform: 'Any CPU'
     configuration: 'Release'
 
+# Run tests (if you have test projects)
 - task: VSTest@2
   inputs:
     platform: 'Any CPU'
     configuration: 'Release'
 
+# Publish build artifacts
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
