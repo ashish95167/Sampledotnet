@@ -7,22 +7,23 @@ trigger:
 - main
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'windows-2022'
 
 steps:
-- task: UseDotNet@2
+- task: VSBuild@1
   inputs:
-    packageType: 'sdk'
-    version: '6.x'
-    installationPath: $(Agent.ToolsDirectory)/dotnet
+    solution: '**/*.sln'
+    msbuildArgs: '/p:DeployOnBuild=true /p:OutputPath=$(Build.ArtifactStagingDirectory)'
+    platform: 'Any CPU'
+    configuration: 'Release'
 
-- script: dotnet build --configuration Release
-  displayName: 'Build the project'
-
-- script: dotnet test --configuration Release --no-build
-  displayName: 'Run unit tests'
+- task: VSTest@2
+  inputs:
+    platform: 'Any CPU'
+    configuration: 'Release'
 
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
+    publishLocation: 'Container'
